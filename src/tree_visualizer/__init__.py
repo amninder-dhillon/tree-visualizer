@@ -1,63 +1,27 @@
-from collections import deque
+import random
+import string
 
-from tree_visualizer.tree import buildTree
-
-from .tree_node import TreeNode
+from tree_visualizer.tree import buildTree, drawTree
 
 
 def main():
+    # True marks a node position; None leaves that indexed position empty.
+    # Every call receives newly random lowercase labels.
+    tree_shapes = {
+        "complete tree": [True, True, True, True, True, True, True],
+        "uneven tree": [True, True, True, True, None, None, True],
+        "left-skewed tree": [True, True, None, True, None, None, None, True],
+        "right-skewed tree": [True, None, True, None, None, None, True, None, None, None, None, None, None, None, True],
+        "zig-zag tree": [True, True, True, None, True, True, None],
+    }
 
-    def bfs(node):
-        ans = []
-        if node is None:
-            return []
-        q = deque()
-        q.append(node)
-
-        while q:
-            ll = len(q)
-            level = []
-            for _ in range(ll):
-                curr = q.popleft()
-                level.append(str(curr.val))
-                if curr.left is not None:
-                    q.append(curr.left)
-
-                if curr.right is not None:
-                    q.append(curr.right)
-
-            ans.append(level)
-
-        return ans
-
-    tree = [1, 2, 3, 4, 5, 6, 7]
-    levels = bfs(buildTree(tree))
-    h = len(levels)
-    gap = 2 ** (h - 1)
-    max_nodes = 2 ** (h - 1)
-    spacing = 3
-    cols = max_nodes + (spacing * (max_nodes - 1))
-    rows = h
-
-    grid = [[" " for _ in range(cols)] for _ in range(rows)]
-    mid_col = (cols - 1) // 2
-    grid[0][mid_col] = levels[0][0]
-    i = 1
-    gap = gap // 2
-
-    v1 = mid_col - gap
-    v2 = mid_col + gap
-    grid[1][mid_col - gap] = levels[1][0]
-    grid[1][mid_col + gap] = levels[1][1]
-
-    gap = gap // 2
-    grid[2][v1 - gap] = levels[2][0]
-    grid[2][v1 + gap] = levels[2][1]
-    grid[2][v2 - gap] = levels[2][2]
-    grid[2][v2 + gap] = levels[2][3]
-
-    for r in range(rows):
-        print(*grid[r])
+    for name, shape in tree_shapes.items():
+        tree_list = [
+            random.choice(string.ascii_lowercase) if node else None
+            for node in shape
+        ]
+        print(f"{name}: {tree_list}")
+        drawTree(buildTree(tree_list))
         print()
 
 
